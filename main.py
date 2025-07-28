@@ -12,10 +12,8 @@ input_folder = os.path.join(os.getcwd(), "input")
 output_folder = os.path.join(os.getcwd(), "output")
 os.makedirs(output_folder, exist_ok=True)
 
-# File exts it looks for
 supported_extensions = (".avi", ".mkv", ".mov", ".flv", ".wmv", ".webm")
 
-# Check for nvda GPU
 def nvenc_available():
     try:
         result = subprocess.run(["ffmpeg", "-hide_banner", "-encoders"],
@@ -25,7 +23,6 @@ def nvenc_available():
         return False
 
 use_gpu = nvenc_available()
-
 
 if not use_gpu:
     logging.warning("h264_nvenc (GPU encoding) is not available.")
@@ -37,31 +34,31 @@ if not use_gpu:
     else:
         logging.info("Falling back to CPU encoding...\n")
 
-# Makes list of all video files in folder
 video_files = [f for f in os.listdir(input_folder) if f.lower().endswith(supported_extensions)]
 
 if not video_files:
     logging.info("No supported video files found in the input folder.")
     exit()
 
-# Start conversion
+logging.info(f"Found {len(video_files)} video files to convert.")
+logging.info(f"Video files: {video_files}")
+check_start = input("Start conversion? (y/n): ").strip().lower()
+
+if check_start != 'y':
+    logging.info("Aborting conversion.")
+    exit()
+    
+logging.info("Starting Conversion")
+
 for video_file in video_files:
     input_path = os.path.join(input_folder, video_file)
 
-    # remove [Fester1500] if present
-    cleaned_name = video_file.replace(" [Fester1500]", "").strip() #Change to other tag if needed
+    cleaned_name = video_file.replace("", "").strip()
     base_name = os.path.splitext(cleaned_name)[0]
     output_filename = f"{base_name}.mp4"
     output_path = os.path.join(output_folder, output_filename)
 
-    # Confirm conversion
-    logging.critical(f"{video_file} is queued to convert, proceed? (y/n): ")
-    choice = input().strip().lower()
-    if choice != 'y':
-        print(f"Skipping {video_file}\n")
-        continue
-
-    # Build FFmpeg command
+    # ffmpeg command
     command = [
         "ffmpeg",
         "-i", input_path,
@@ -84,14 +81,14 @@ for video_file in video_files:
             "-crf", "18",
         ]
 
-    # Audio
+    # audio
     command += [
         "-c:a", "aac",
         "-b:a", "192k",
         output_path
     ]
 
-    # Run
+    # run
     try:
         subprocess.run(command, check=True)
         logging.info(f"FINISHED: {video_file} -> {output_filename}\n")
