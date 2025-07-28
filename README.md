@@ -4,7 +4,7 @@ _I needed to convert .avi to .mp4 to play on my TV._
 * Defaults to GPU encoding on NVDA GPU, will fallback to CPU
 
 ### Requirements
-* Python 3
+* Python 3.x.x
 * ffmpeg full (https://www.gyan.dev/ffmpeg/builds/)
 
 ### Instructions
