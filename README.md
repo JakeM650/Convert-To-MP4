@@ -13,3 +13,5 @@ _**Why:** I needed to convert .avi to .mp4 to play on my TV._
 3. Create an `input` and `output` folder in project directory
 4. Put video files in the `input` folder
 5. Run the script
+
+_To support more formats, add file extensions to the `supported_extensions` tuple._
